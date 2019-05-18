@@ -22,7 +22,7 @@ public class MessageReciever {
         }
         return res;
     }
-    
+
 
     private byte[] convertToBigEndianInt(int data, byte length){
         byte[] res = new byte[length];
@@ -34,8 +34,6 @@ public class MessageReciever {
 
     public boolean packageIsCorrect()
     {
-        System.out.println(firstCRC);
-        System.out.println(secondCRC);
         return firstCRC && secondCRC;
     }
 

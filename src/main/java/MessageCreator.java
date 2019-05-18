@@ -7,13 +7,15 @@ import javax.crypto.KeyGenerator;
 public class MessageCreator {
 
     private byte[] myPackage;
+    private Key encryptionKey;
+    private Cipher myCipher;
     private static long numberOfMessage = 0;
     private static final byte B_SRC = 1;
     private static final int C_TYPE = 1;
     private static final int B_USER_ID = 1;
 
-    MessageCreator(String message){
-        this.myPackage = createPackage(createMessage(message));
+    MessageCreator(String message, Key key, Cipher cipher){
+        this.myPackage = createPackage(createMessage(message, key, cipher));
     }
 
     private byte[] createPackage(byte[] message){
@@ -38,7 +40,6 @@ public class MessageCreator {
         }
         tempCrc = new CRC16(tmp);
         convertToBigEndianInt(tempCrc.getCrc(), (byte)4, 18+message.length, 22+message.length, res);
-        System.out.println(Arrays.toString(res));
         return res;
     }
 
@@ -72,17 +73,18 @@ public class MessageCreator {
         }
     }
 
-    private byte[] createMessage(String message){
+    private byte[] createMessage(String message,Key key, Cipher cipher){
+        this.encryptionKey = key;
         byte[] messageBytesArray = message.getBytes();
         byte[] cipherBytes = new byte[1];
         try{
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(128);  // Key size
-            Key key = keyGen.generateKey();
+//            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+//            keyGen.init(128);  // Key size
+//            Key key = keyGen.generateKey();
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");  // Transformation of the algorithm
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            cipherBytes = cipher.doFinal(messageBytesArray);
+            Cipher tmpcipher = cipher;  // Transformation of the algorithm
+            tmpcipher.init(Cipher.ENCRYPT_MODE, encryptionKey);
+            cipherBytes = tmpcipher.doFinal(messageBytesArray);
         } catch (Exception ex)
         {
             ex.printStackTrace();
