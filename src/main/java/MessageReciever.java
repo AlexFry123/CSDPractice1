@@ -1,11 +1,23 @@
+import javax.crypto.Cipher;
+import java.security.Key;
+import java.util.Arrays;
+
 public class MessageReciever {
 
     private boolean firstCRC;
     private boolean secondCRC;
+    private boolean messageCorrect;
+    private Cipher decrCipher;
+    private Key decrKey;
+    private String message;
 
-    MessageReciever(byte[] packet){
+    MessageReciever(byte[] packet, Key key, Cipher cipher, String startMessage){
+        this.decrCipher = cipher;
+        this.decrKey = key;
+        this.message = startMessage;
         this.firstCRC = checkCRC(packet,0,14);
         this.secondCRC = checkCRC(packet,18,packet.length-4);
+        this.messageCorrect = messageIsCorrect(packet);
     }
 
     private boolean checkCRC(byte[] packet, int start, int finish){
@@ -32,9 +44,21 @@ public class MessageReciever {
         return res;
     }
 
+    private boolean messageIsCorrect(byte[] packet){
+        String res = "";
+        try {
+            decrCipher.init(Cipher.DECRYPT_MODE, decrKey, decrCipher.getParameters());
+            res = new String(decrCipher.doFinal(Arrays.copyOfRange(packet, 26, packet.length-4)));
+        }catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return message.equals(res);
+    }
+
     public boolean packageIsCorrect()
     {
-        return firstCRC && secondCRC;
+        return firstCRC && secondCRC && messageCorrect;
     }
 
 }

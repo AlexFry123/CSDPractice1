@@ -54,9 +54,9 @@ public class MessageCreatorTest {
             MessageCreator msgCrt1 = new MessageCreator(startMessage1, key1, cipher1);
             MessageCreator msgCrt2 = new MessageCreator(startMessage2, key2, cipher2);
             MessageCreator msgCrt3 = new MessageCreator(startMessage3, key3, cipher3);
-            MessageReciever msgRcv1 = new MessageReciever(msgCrt1.getMyPackage());
-            MessageReciever msgRcv2 = new MessageReciever(msgCrt2.getMyPackage());
-            MessageReciever msgRcv3 = new MessageReciever(msgCrt3.getMyPackage());
+            MessageReciever msgRcv1 = new MessageReciever(msgCrt1.getMyPackage(), key1, cipher1, startMessage1);
+            MessageReciever msgRcv2 = new MessageReciever(msgCrt2.getMyPackage(), key2, cipher2, startMessage2);
+            MessageReciever msgRcv3 = new MessageReciever(msgCrt3.getMyPackage(), key3, cipher3, startMessage3);
             Assert.assertTrue(msgRcv1.packageIsCorrect());
             Assert.assertTrue(msgRcv2.packageIsCorrect());
             Assert.assertTrue(msgRcv3.packageIsCorrect());
