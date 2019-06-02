@@ -16,7 +16,7 @@ public void fakeRecieverTest() throws InterruptedException {
     FakeReceiver fkrcv = new FakeReceiver();
     fkrcv.receiveMessage();
     for(int i = 0; i<18; i++){
-        String str = fkrcv.generateCommand(i/3);
+        String str = fkrcv.generateCommand(i/2);
         tmp.add(new MyPackage(new Message(str, i/3, 1)).getMyPackage());
     }
     while(fkrcv.getMessages().size()!=0) {
@@ -39,7 +39,7 @@ public void fakeRecieverTest() throws InterruptedException {
         }
         s.start();
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             d.setFinish(true);
             p.setFinish(true);
             en.setFinish(true);

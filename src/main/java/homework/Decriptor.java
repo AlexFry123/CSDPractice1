@@ -9,6 +9,12 @@ public class Decriptor {
     private LinkedBlockingQueue<byte[]> decrQueue;
     private static LinkedBlockingQueue<Message> processQueue;
 
+    public byte[] getMessage() {
+        return message;
+    }
+
+    private byte[] message;
+
     public void setFinish(boolean finish) {
         this.finish = finish;
     }
@@ -21,6 +27,11 @@ public class Decriptor {
 
     static {
         processQueue = new LinkedBlockingQueue<>();
+    }
+
+    public Decriptor(byte[] pack){
+        this.decrQueue = new LinkedBlockingQueue<>();
+        this.message = pack;
     }
 
     public Decriptor(LinkedBlockingQueue<byte[]> queue){
@@ -47,6 +58,11 @@ public class Decriptor {
         processQueue.add(new Message(tmp.decryptMessage()));
     }
 
+    public byte[] decrypt(byte[] message){
+        byte[] arr = Arrays.copyOfRange(message,8, message.length);
+        Message tmp = new Message(arr);
+        return tmp.decryptMessage();
+    }
 //    @Override
 //    public void run(){
 //        while(finish!=true) {

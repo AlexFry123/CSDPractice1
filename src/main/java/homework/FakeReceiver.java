@@ -26,7 +26,7 @@ public class FakeReceiver implements Reciever{
        }
     }
 
-    public String generateCommand(int num){
+    public static String generateCommand(int num){
         switch(num){
             case 0:
                 return "Items quantity.";

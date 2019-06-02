@@ -1,8 +1,9 @@
 package homework;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
+import javax.crypto.*;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class Message {
@@ -13,21 +14,8 @@ public class Message {
     private static Key key;
     private static Cipher cipher;
 
-    static
-    {
-        try
-        {
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(128);  // Key size
-
-            cipher = Cipher.getInstance("AES");
-            key = keyGen.generateKey();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();;
-        }
-
+    public static void setKey(Key k){
+        key = k;
     }
 
     public Message(String message, int type, int userId){
@@ -55,11 +43,25 @@ public class Message {
 
     public byte[] encryptMessage(){
         byte[] encr = new byte[1];
-        try{
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("AES");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+        try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        try {
             encr = cipher.doFinal(Arrays.copyOfRange(message, 8, message.length));
-        }catch (Exception ex){
-            ex.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
         }
         byte[] res = new byte[8+encr.length];
         convertToBigEndianInt(c_type, (byte)4, 0,4, res);
@@ -67,14 +69,16 @@ public class Message {
         for(int i = 8; i<res.length; i++){
             res[i] = encr[i-8];
         }
+//        System.out.println("Message: " + Arrays.toString(res));
         return res;
     }
 
     public byte[] decryptMessage(){
         byte[] encr = new byte[1];
         try{
+            Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, key, cipher.getParameters());
-            encr = cipher.doFinal(Arrays.copyOfRange(message, 8, message.length));
+            encr = cipher.doFinal(message);
         }catch (Exception ex){
             ex.printStackTrace();
         }
